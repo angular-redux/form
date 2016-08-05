@@ -35,6 +35,7 @@ export abstract class State {
     return deepValue;
   }
 
+  // FIXME(cbond): This is just completely wrong and needs to be rewritten immediately
   static assign<State>(original: State, path: string[], value?) {
     if (State.empty(original)) {
       return value;
