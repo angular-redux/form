@@ -88,7 +88,7 @@ export class Connect<RootState> {
 
     if (formElement instanceof FormArray) {
       formElement.controls.forEach((c, index) => {
-        for (const d of this.descendants(path.concat([index]), c)) {
+        for (const d of this.descendants((<any>path).concat([index]), c)) {
           pairs.push(d);
         }
       })
@@ -101,7 +101,7 @@ export class Connect<RootState> {
       }
     }
     else if (formElement instanceof NgControl || formElement instanceof FormControl) {
-      return [{path: path, control: formElement}];
+      return [{path: path, control: <any> formElement}];
     }
     else {
       throw new Error(`Unknown type of form element: ${formElement.constructor.name}`);
