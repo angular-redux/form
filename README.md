@@ -87,7 +87,6 @@ const store = create(reducers, <MyApplicationState> {});
     NgReduxForms,
   ],
   providers: [
-    NgRedux,
     provideFormConnect(store),
   ],
   bootstrap: [MyApplicationComponent]
