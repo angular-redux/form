@@ -16,6 +16,9 @@ exports.js = {
 exports.ts = {
   test: /\.ts$/,
   loader: 'awesome-typescript-loader',
+  query: {
+    babelCore: 'babel-core',
+  },
 };
 
 exports.istanbulInstrumenter = {
