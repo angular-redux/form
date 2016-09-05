@@ -1,5 +1,8 @@
 ## ng2-redux-form
 
+[![npm version](https://img.shields.io/npm/v/ng2-redux-form.svg)](https://www.npmjs.com/package/ng2-redux-form)
+[![npm downloads](https://img.shields.io/npm/dt/ng2-redux-form.svg)](https://www.npmjs.com/package/ng2-redux-form)
+
 This library is a thin layer of connective tissue between Angular 2 forms and
 Redux. It provides unidirectional data binding between your Redux state and
 your forms elements. It builds on existing Angular functionality like
