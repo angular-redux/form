@@ -117,7 +117,7 @@ export class ConnectArray<RootState> extends ControlContainer {
     return <FormGroupDirective>this.parent.formDirective;
   }
 
-  get path(): string[] {
+  get path(): Array<string> {
     return controlPath(this.key, this.parent);
   }
 

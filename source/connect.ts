@@ -23,7 +23,7 @@ import {FormStore} from './form-store';
 import {State} from './state';
 
 export interface ControlPair {
-  path: string[];
+  path: Array<string>;
   control: AbstractControl;
 }
 
@@ -42,7 +42,7 @@ export class Connect<RootState> {
     private form: NgForm
   ) {}
 
-  public get path(): string[] {
+  public get path(): Array<string> {
     const path = typeof this.connect === 'function'
       ? this.connect()
       : this.connect;
@@ -52,8 +52,8 @@ export class Connect<RootState> {
         if (State.empty(path)) {
           return [];
         }
-        if (typeof path.length === 'number') {
-          return <string[]> path;
+        if (Array.isArray(path)) {
+          return <Array<string>> path;
         }
       case 'string':
         return (<string> path).split(/\./g);
@@ -83,7 +83,7 @@ export class Connect<RootState> {
     });
   }
 
-  private descendants(path: string[], formElement): Array<ControlPair> {
+  private descendants(path: Array<string>, formElement): Array<ControlPair> {
     const pairs = new Array<ControlPair>();
 
     if (formElement instanceof FormArray) {
