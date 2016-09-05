@@ -9,15 +9,16 @@ const base = [
     __TEST__: JSON.stringify(process.env.TEST || false),
   }),
   new webpack.NoErrorsPlugin(),
-  new webpack.IgnorePlugin(/angular/),
-  new webpack.IgnorePlugin(/rxjs/),
 ];
 
 const development = [
   new webpack.SourceMapDevToolPlugin({ filename: null, test: /\.ts$/ })
 ];
 
-const production = [];
+const production = [
+  new webpack.IgnorePlugin(/angular/),
+  new webpack.IgnorePlugin(/rxjs/),
+];
 
 module.exports = base
   .concat(process.env.NODE_ENV === 'production' ? production : [])

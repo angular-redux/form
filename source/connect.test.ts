@@ -1,21 +1,17 @@
 import {
-  addProviders,
   fakeAsync,
   flushMicrotasks,
   inject,
-  ComponentFixture,
-  TestComponentBuilder,
+  TestBed,
   ComponentFixtureNoNgZone,
 } from '@angular/core/testing';
 import {
-  provide,
   Component,
   Input,
 } from '@angular/core';
 import {
-  FORM_DIRECTIVES,
-  REACTIVE_FORM_DIRECTIVES,
-  provideForms,
+  FormsModule,
+  ReactiveFormsModule,
   FormControl,
   NgForm,
   FormGroup,
@@ -31,26 +27,28 @@ import {
 
 import {composeReducers} from './compose-reducers';
 import {defaultFormReducer} from './form-reducer';
-
-import {provideFormConnect} from './configure';
-import {Connect} from './connect';
+import {provideReduxForms} from './configure';
+import {NgReduxForms} from './module';
 
 import {
   logger,
   simulateUserTyping,
 } from './tests.utilities';
 
+// This component will be overridden with new selectors and templates
+@Component({
+  selector: 'none',
+  template: '',
+})
+class TestComponent {}
+
 const createControlFromTemplate = (key: string, template: string) => {
-  @Component({
+  const config = {
     selector: `test-form-${key}`,
     template,
-    directives: [
-      FORM_DIRECTIVES,
-      REACTIVE_FORM_DIRECTIVES,
-      Connect,
-    ]
-  })
-  class TestComponent {}
+  };
+
+  TestBed.overrideComponent(TestComponent, {set: config});
 
   return TestComponent;
 };
@@ -87,130 +85,146 @@ const reducers = composeReducers(
   }),
   defaultFormReducer());
 
-describe('connect directive', () => {
-  let builder: TestComponentBuilder;
+TestBed.configureTestingModule({
+  imports: [
+    NgReduxForms,
+  ],
+  declarations: [
+    TestComponent,
+  ]
+});
 
+TestBed.compileComponents();
+
+describe('connect directive', () => {
   let store: Store<AppState>;
+
   beforeEach(() => {
     const create = compose(applyMiddleware(logger))(createStore);
+
     store = create(reducers, <AppState> {});
+
+    TestBed.configureCompiler({
+      providers: [
+        {provide: ComponentFixtureNoNgZone, useValue: true},
+        provideReduxForms(store)
+      ]
+    });
   });
 
-  beforeEach(() =>
-    addProviders([
-      provide(ComponentFixtureNoNgZone, {useValue: true}),
-      provideForms(),
-      provideFormConnect(store)
-    ]));
-
-  beforeEach(inject([TestComponentBuilder],
-    (tcb: TestComponentBuilder) => {
-      builder = tcb;
-    }));
-
-  const ConnectComponent = createControlFromTemplate('controlExample', `
-    <form connect="fooState">
-      <input type="text" name="example" ngControl ngModel />
-    </form>
-  `);
-
   it('should bind all form controls to application state',
-    fakeAsync(inject([], () => {
-      const fixture = builder.createFakeAsync(ConnectComponent);
-      fixture.detectChanges();
+    () => {
+      const ConnectComponent = createControlFromTemplate('controlExample', `
+        <form connect="fooState">
+          <input type="text" name="example" ngControl ngModel />
+        </form>
+      `);
 
-      flushMicrotasks();
+      return fakeAsync(inject([], () => {
+        const fixture = TestBed.createComponent(ConnectComponent);
+        fixture.detectChanges();
 
-      const textbox = fixture.nativeElement.querySelector('input');
-      expect(textbox.value).toEqual('Test!');
-  })));
+        flushMicrotasks();
 
-  const DeepConnectComponent = createControlFromTemplate('deepConnectExample', `
-    <form connect="fooState.deepInside">
-      <input type="text" name="foo" ngControl ngModel />
-    </form>
-  `);
+        const textbox = fixture.nativeElement.querySelector('input');
+        expect(textbox.value).toEqual('Test!');
+      }));
+  });
 
   it('should bind a form control to element deep inside application state',
-    fakeAsync(inject([], () => {
-      const fixture = builder.createFakeAsync(DeepConnectComponent);
-      fixture.detectChanges();
+    () => {
+      const DeepConnectComponent = createControlFromTemplate('deepConnectExample', `
+        <form connect="fooState.deepInside">
+          <input type="text" name="foo" ngControl ngModel />
+        </form>
+      `);
 
-      flushMicrotasks();
+      return fakeAsync(inject([], () => {
+        const fixture = TestBed.createComponent(DeepConnectComponent);
+        fixture.detectChanges();
 
-      const textbox = fixture.nativeElement.querySelector('input');
-      expect(textbox.value).toEqual('Bar!');
-    })));
+        flushMicrotasks();
 
-  const CheckboxForm = createControlFromTemplate('checkboxExample', `
-    <form connect="fooState">
-      <input type="checkbox" name="checkExample" ngControl ngModel />
-    </form>
-  `);
+        const textbox = fixture.nativeElement.querySelector('input');
+        expect(textbox.value).toEqual('Bar!');
+      }));
+    });
 
   it('should bind a checkbox to a boolean state',
-    fakeAsync(inject([], () => {
-      const fixture = builder.createFakeAsync(CheckboxForm);
-      fixture.detectChanges();
+    () => {
+      const CheckboxForm = createControlFromTemplate('checkboxExample', `
+        <form connect="fooState">
+          <input type="checkbox" name="checkExample" ngControl ngModel />
+        </form>
+      `);
 
-      flushMicrotasks();
+      return fakeAsync(inject([], () => {
+        const fixture = TestBed.createComponent(CheckboxForm);
+        fixture.detectChanges();
 
-      const checkbox = fixture.nativeElement.querySelector('input[type="checkbox"]');
-      expect(checkbox.checked).toEqual(true);
-    })));
+        flushMicrotasks();
 
-  const SelectForm = createControlFromTemplate('selectExample', `
-    <form connect="fooState">
-      <select name="bar" ngControl ngModel>
-        <option value="none">None</option>
-        <option value="one">One</option>
-        <option value="two">Two</option>
-      </select>
-    </form>
-  `);
+        const checkbox = fixture.nativeElement.querySelector('input[type="checkbox"]');
+        expect(checkbox.checked).toEqual(true);
+      }));
+    });
 
   it('should bind a select dropdown to application state',
-    fakeAsync(inject([], () => {
-      const fixture = builder.createFakeAsync(SelectForm);
-      fixture.detectChanges();
+    () => {
+      const SelectForm = createControlFromTemplate('selectExample', `
+        <form connect="fooState">
+          <select name="bar" ngControl ngModel>
+            <option value="none">None</option>
+            <option value="one">One</option>
+            <option value="two">Two</option>
+          </select>
+        </form>
+      `);
 
-      flushMicrotasks();
+      return fakeAsync(inject([], () => {
+        const fixture = TestBed.createComponent(SelectForm);
+        fixture.detectChanges();
 
-      const select = fixture.nativeElement.querySelector('select');
-      expect(select.value).toEqual('two');
+        flushMicrotasks();
 
-      // TODO(cbond): How to simulate a click-select sequence on this control?
-      // Just updating `value' does not appear to invoke all of the Angular
-      // change routines and therefore does not update Redux. But manually clicking
-      // and selecting does. Need to find a way to simulate that sequence.
-    })));
+        const select = fixture.nativeElement.querySelector('select');
+        expect(select.value).toEqual('two');
 
-  const UpdateTextValueExample = createControlFromTemplate('updateTextValue', `
-    <form connect="fooState">
-      <input type="text" name="bar" ngControl ngModel />
-    </form>
-  `);
+        // TODO(cbond): How to simulate a click-select sequence on this control?
+        // Just updating `value' does not appear to invoke all of the Angular
+        // change routines and therefore does not update Redux. But manually clicking
+        // and selecting does. Need to find a way to simulate that sequence.
+      }));
+    });
 
   it('should update Redux state when the user changes the value of a control',
-    fakeAsync(inject([], () => {
-      const fixture = builder.createFakeAsync(UpdateTextValueExample);
-      fixture.detectChanges();
+    () => {
+      const UpdateTextValueExample = createControlFromTemplate('updateTextValue', `
+        <form connect="fooState">
+          <input type="text" name="bar" ngControl ngModel />
+        </form>
+      `);
 
-      flushMicrotasks();
+      return fakeAsync(inject([], () => {
+        const fixture = TestBed.createComponent(UpdateTextValueExample);
+        fixture.detectChanges();
 
-      // validate initial data before we do the UI tests
-      let state = store.getState();
-      expect(state.fooState.bar).toEqual('two');
+        flushMicrotasks();
 
-      const textbox = fixture.nativeElement.querySelector('input');
-      expect(textbox.value).toEqual('two');
+        // validate initial data before we do the UI tests
+        let state = store.getState();
+        expect(state.fooState.bar).toEqual('two');
 
-      return simulateUserTyping(textbox, 'abc')
-        .then(() => {
-          expect(textbox.value).toEqual('twoabc');
+        const textbox = fixture.nativeElement.querySelector('input');
+        expect(textbox.value).toEqual('two');
 
-          state = store.getState();
-          expect(state.fooState.bar).toEqual('twoabc');
-        });
-    })));
+        return simulateUserTyping(textbox, 'abc')
+          .then(() => {
+            expect(textbox.value).toEqual('twoabc');
+
+            state = store.getState();
+            expect(state.fooState.bar).toEqual('twoabc');
+          });
+      }));
+  });
 });

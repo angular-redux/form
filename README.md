@@ -74,7 +74,7 @@ Or if you are using Redux without ng2-redux, then your bootstrap call would look
 more like this (substitute your own store creation code):
 
 ```typescript
-import {provideFormConnect} from 'ng2-redux-form';
+import {provideReduxForms} from 'ng2-redux-form';
 
 const storeCreator = compose(applyMiddleware(logger))(createStore);
 const store = create(reducers, <MyApplicationState> {});
@@ -87,21 +87,16 @@ const store = create(reducers, <MyApplicationState> {});
     NgReduxForms,
   ],
   providers: [
-    provideFormConnect(store),
+    provideReduxForms(store),
   ],
   bootstrap: [MyApplicationComponent]
 })
 export class ExampleModule {}
 ```
 
-(Note that in these examples, we are explicitly disabling the old Angular 2 forms
-API. You should too. The deprecated forms API will be removed at some point in the
-near future so you should build your application using the new one from
-`provideForms`.)
-
-The essential bit of code in the above samples is the call to `provideFormConnect(...)`.
+The essential bit of code in the above samples is the call to `provideReduxForms(...)`.
 This configures ng2-form-redux and provides access to your Redux store or NgRedux
-instance. The shape of the object that `provideFormConnect` expects is very
+instance. The shape of the object that `provideReduxForms` expects is very
 basic:
 
 ```typescript

@@ -5,20 +5,21 @@ exports.css = {
   loader: 'raw',
 };
 
-exports.js = {
-  test: /\.js$/,
-  loader: 'babel',
-  query: {
-    compact: false,
-  },
-};
-
 exports.ts = {
   test: /\.ts$/,
   loader: 'awesome-typescript-loader',
   query: {
     babelCore: 'babel-core',
   },
+};
+
+exports.js = {
+  test: /\.js$/,
+  loader: 'babel',
+  query: {
+    compact: false,
+  },
+  include: /(angular|rxjs)/,
 };
 
 exports.istanbulInstrumenter = {

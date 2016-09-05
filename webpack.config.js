@@ -13,6 +13,7 @@ module.exports = {
     publicPath: '/',
     sourceMapFilename: '[name].js.map',
     chunkFilename: '[id].chunk.js',
+    library: 'main',
     libraryTarget: 'umd',
   },
 
