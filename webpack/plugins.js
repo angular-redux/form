@@ -17,10 +17,7 @@ const development = [
   new webpack.SourceMapDevToolPlugin({ filename: null, test: /\.ts$/ })
 ];
 
-const production = [
-  new webpack.optimize.OccurenceOrderPlugin(),
-  new webpack.optimize.DedupePlugin(),
-];
+const production = [];
 
 module.exports = base
   .concat(process.env.NODE_ENV === 'production' ? production : [])
