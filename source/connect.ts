@@ -77,7 +77,7 @@ export class Connect<RootState> {
         this.resetState();
       });
 
-      setImmediate(() => {
+      scheduleMicroTask(() => {
         this.formSubscription = this.form.valueChanges.debounceTime(0).subscribe(values => this.publish(values));
       });
     });
