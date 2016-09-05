@@ -115,7 +115,7 @@ export interface AbstractStore<RootState> {
 }
 ```
 
-Both `NgRedux<T>` and `Redux.Store<T>` conform to this shape. If you have something
+Both `NgRedux<T>` and `Redux.Store<T>` conform to this shape. If you have a more
 complicated use-case that is not covered here, you could even create your own store
 shim as long as it conforms to the shape of `AbstractStore<RootState>`.
 
