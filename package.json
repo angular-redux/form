@@ -54,8 +54,8 @@
     "node": ">=6.0"
   },
   "scripts": {
-    "prebuild": "npm run clean",
-    "build": "npm install && cross-env NODE_ENV=production webpack",
+    "prebuild": "npm run clean && npm install",
+    "build": "cross-env NODE_ENV=production webpack",
     "clean": "rimraf dist",
     "cover": "istanbul report --include=**/chrome/coverage-final.json text text-summary",
     "postinstall": "npm run typings && npm run build",
