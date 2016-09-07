@@ -36,6 +36,8 @@ import {
   NG_VALIDATORS
 } from '@angular/forms/src/validators';
 
+import {Unsubscribe} from 'redux';
+
 import {Subscription} from 'rxjs';
 
 import {Connect} from './connect';
@@ -58,7 +60,7 @@ export class ConnectArrayTemplate {
   }]
 })
 export class ConnectArray<RootState> extends ControlContainer {
-  private stateSubscription: Redux.Unsubscribe;
+  private stateSubscription: Unsubscribe;
 
   private formSubscription: Subscription;
 

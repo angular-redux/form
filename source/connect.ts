@@ -16,6 +16,8 @@ import {scheduleMicroTask} from '@angular/forms/src/facade/lang';
 
 import {Subscription} from 'rxjs';
 
+import {Unsubscribe} from 'redux';
+
 import 'rxjs/add/operator/debounceTime';
 
 import {FormException} from './form-exception';
@@ -33,7 +35,7 @@ export interface ControlPair {
 export class Connect<RootState> {
   @Input('connect') connect: () => (string | string[]) | string | string[];
 
-  private stateSubscription: Redux.Unsubscribe;
+  private stateSubscription: Unsubscribe;
 
   private formSubscription: Subscription;
 

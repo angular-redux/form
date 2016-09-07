@@ -1,6 +1,6 @@
 {
   "name": "ng2-redux-form",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Build Angular 2 forms with Redux",
   "devDependencies": {
     "@angular/common": "2.0.0-rc.6",
@@ -66,6 +66,6 @@
     "test:watch": "cross-env NODE_ENV=development karma start --singleRun false",
     "typings": "rimraf typings && typings install"
   },
-  "main": "dist/main.js",
-  "typings": "index.d.ts"
+  "main": "source/index",
+  "typings": "source/index",
 }

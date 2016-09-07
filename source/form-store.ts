@@ -3,7 +3,7 @@ import {NgForm} from '@angular/forms';
 
 import {NgRedux} from 'ng2-redux';
 
-import {Action, Store} from 'redux';
+import {Action, Store, Unsubscribe} from 'redux';
 
 export interface AbstractStore<RootState> {
   /// Dispatch an action
@@ -13,7 +13,7 @@ export interface AbstractStore<RootState> {
   getState(): RootState;
 
   /// Subscribe to changes in the store
-  subscribe(fn: (state: RootState) => void): Redux.Unsubscribe;
+  subscribe(fn: (state: RootState) => void): Unsubscribe;
 }
 
 export const FORM_CHANGED = '@@ng2-redux-form/FORM_CHANGED';
@@ -33,7 +33,7 @@ export class FormStore<RootState> {
     return this.store.getState();
   }
 
-  subscribe(fn: (state: RootState) => void): Redux.Unsubscribe {
+  subscribe(fn: (state: RootState) => void): Unsubscribe {
     return this.store.subscribe(() => fn(this.getState()));
   }
 
