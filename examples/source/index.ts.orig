@@ -42,17 +42,10 @@ import {logger} from '../../source/tests.utilities';
               <option value="two">Two</option>
               <option value="three">Three</option>
             </select>
-            <!-- Nested array -->
-            <template connectArray let-innerIndex="index" connectArrayOf="cities">
-              <div [ngModelGroup]="innerIndex">
-                <input ngControl ngModel name="name" type="string" placeholder='City' />
-              </div>
-            </template>
           </div>
         </template>
         <button (click)="addRow()">Add</button>
       </form>
-
       <div>
         <h3>Redux state</h3>
         <div class="form-values">
@@ -65,6 +58,7 @@ import {logger} from '../../source/tests.utilities';
             <span>{{checkboxExample | async}}</span>
           </div>
           <div class="arrays">
+            Array
             <div *ngFor="let item of (arrayExample | async)">
               <div>
                 Number
@@ -73,12 +67,6 @@ import {logger} from '../../source/tests.utilities';
               <div>
                 Dropdown
                 <span>{{item.dropdownExample}}</span>
-              </div>
-              <div class="arrays">
-                Cities:
-                <div *ngFor="let city of (item.cities)">
-                  <span>{{city.name}}</span>
-                </div>
               </div>
             </div>
           </div>
@@ -158,9 +146,6 @@ interface AppState {
     arrayExample?: {
       numberExample?: number,
       dropdownExample?: string;
-      cities: {
-        name: string
-      }[]
     }[]
   };
   todos?: Map<string, any>;
@@ -172,13 +157,11 @@ const form1 = {
   arrayExample: [
     {
       numberExample: 1,
-      dropdownExample: 'one',
-      cities: [{name: 'Detroit'},{name: 'Pittsburgh'}]
+      dropdownExample: 'one'
     },
     {
       numberExample: 2,
-      dropdownExample: 'two',
-      cities: [{name: 'Chicago'}, {name: 'New York'}]
+      dropdownExample: 'two'
     }
   ]
 };
@@ -202,8 +185,7 @@ function formReducer(state = form1, action: {type: string, payload?}) {
   if (action.type === 'ADD_FORM_ENTRY') {
     state.arrayExample.push({
       numberExample: null,
-      dropdownExample: null,
-      cities:[{name: ''}]
+      dropdownExample: null
     });
   }
   return state;

@@ -24,8 +24,8 @@
   clear: both;
 }
 
-.form-values .arrays div {
-  display: inline-block;
+.form-values .arrays > div {
+  border: 1px solid #666;
 }
 
 input[type="text"] {

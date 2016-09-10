@@ -97,9 +97,7 @@ export class Connect<RootState> {
     }
     else if (formElement instanceof FormGroup) {
       for (const k of Object.keys(formElement.controls)) {
-        for (const d of this.descendants(path.concat([k]), formElement.controls[k])) {
-          pairs.push(d);
-        }
+        pairs.push({path:path.concat([k]), control: formElement.controls[k]});
       }
     }
     else if (formElement instanceof NgControl || formElement instanceof FormControl) {
@@ -109,7 +107,7 @@ export class Connect<RootState> {
       throw new Error(`Unknown type of form element: ${formElement.constructor.name}`);
     }
 
-    return pairs;
+    return pairs.filter(p => (<any>p.control)._parent === this.form.control);
   }
 
   private resetState() {
