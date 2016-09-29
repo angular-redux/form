@@ -33,7 +33,7 @@ export interface ControlPair {
   selector: 'form[connect]',
 })
 export class Connect<RootState> {
-  @Input('connect') connect: () => (string | string[]) | string | string[];
+  @Input('connect') connect: () => (string | number) | Array<string | number>;
 
   private stateSubscription: Unsubscribe;
 
@@ -67,7 +67,10 @@ export class Connect<RootState> {
   ngOnDestroy () {
     if (this.formSubscription) {
       this.formSubscription.unsubscribe();
-      this.formSubscription = null;
+    }
+
+    if (typeof this.stateSubscription === 'function') {
+      this.stateSubscription(); // unsubscribe
     }
   }
 
