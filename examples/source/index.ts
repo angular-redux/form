@@ -22,9 +22,8 @@ import {
   NgReduxForms,
   composeReducers,
   defaultFormReducer,
+  logger,
 } from '../../source';
-
-import {logger} from '../../source/tests.utilities';
 
 @Component({
   selector: 'form-example',
@@ -151,7 +150,7 @@ export class Example {
   }
 }
 
-interface AppState {
+export interface AppState {
   form1?: {
     textExample?: string;
     checkboxExample?: boolean;

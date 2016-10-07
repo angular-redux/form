@@ -1,6 +1,6 @@
 {
   "name": "ng2-redux-form",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Build Angular 2 forms with Redux",
   "devDependencies": {
     "@angular/common": "2.0.0",
@@ -21,7 +21,8 @@
     "karma-sourcemap-writer": "^0.1.2",
     "karma-spec-reporter": "0.0.26",
     "karma-transform-path-preprocessor": "0.0.3",
-    "karma-webpack": "^1.7.0"
+    "karma-webpack": "^1.7.0",
+    "webpack": "^2.1.0-beta.25"
   },
   "dependencies": {
     "@angular/core": "2.0.0",
@@ -40,8 +41,6 @@
     "rxjs": "5.0.0-beta.11",
     "ts-helpers": "^1.1.1",
     "typings": "^1.0",
-    "webpack": "1.13.1",
-    "webpack-dev-middleware": "^1.6.1",
     "zone.js": "^0.6.12"
   },
   "peerDependencies": {

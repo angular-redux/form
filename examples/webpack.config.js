@@ -12,4 +12,9 @@ module.exports =
     }),
     externals: null,
     plugins: require('./webpack/plugins'),
+    resolve: Object.assign(config.resolve, {
+      modules: [
+        path.join(__dirname, 'node_modules'),
+      ],
+    }),
   });

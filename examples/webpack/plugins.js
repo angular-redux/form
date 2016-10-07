@@ -12,4 +12,6 @@ module.exports = [
   }),
   new webpack.NoErrorsPlugin(),
   new webpack.SourceMapDevToolPlugin({ filename: null, test: /\.ts$/ }),
+  new webpack.ContextReplacementPlugin(
+    /angular\/core\/(esm\/src|src)\/linker/, __dirname),
 ];

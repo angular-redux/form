@@ -145,10 +145,11 @@ export class ConnectArray<RootState> extends ControlContainer {
       return; // no state to retreive if no key is set
     }
 
-    const iterable: Iterable<any> = State.get(state, this.connection.path.concat(this.path));
+    const iterable = State.get(state, this.connection.path.concat(this.path));
 
     let index = 0;
-    for (const iterableValue of iterable) {
+
+    for (const value of iterable) {
       var viewRef = this.viewContainerRef.length > index
         ? <EmbeddedViewRef<ConnectArrayTemplate>>this.viewContainerRef.get(index)
         : null;
@@ -159,7 +160,7 @@ export class ConnectArray<RootState> extends ControlContainer {
             new ConnectArrayTemplate(
               index,
               index,
-              iterableValue),
+              value),
             index);
 
         this.patchDescendantControls(viewRef);
@@ -171,11 +172,11 @@ export class ConnectArray<RootState> extends ControlContainer {
           new ConnectArrayTemplate(
             index,
             index,
-            iterableValue));
+            value));
       }
 
       ++index;
-    }
+    };
 
     while (this.viewContainerRef.length > index) {
       this.viewContainerRef.remove(this.viewContainerRef.length - 1);
@@ -235,7 +236,7 @@ export class ConnectArray<RootState> extends ControlContainer {
         return emptyControl();
     }
 
-    const iterate = <T>(iterable: Iterable<T>): FormArray => {
+    const iterate = (iterable): FormArray => {
       const array = new FormArray([]);
 
       this.registerInternals(array);

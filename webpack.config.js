@@ -23,11 +23,13 @@ module.exports = {
 
   resolve: {
     extensions: [
-      '',
       '.webpack.js',
       '.web.js',
       '.ts',
       '.js'
+    ],
+    modules: [
+      path.join(__dirname, 'node_modules'),
     ],
   },
 
