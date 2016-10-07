@@ -1,6 +1,6 @@
 {
   "name": "ng2-redux-form",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Build Angular 2 forms with Redux",
   "devDependencies": {
     "@angular/common": "2.0.0",
@@ -9,7 +9,6 @@
     "@angular/platform-browser-dynamic": "2.0.0",
     "@angular/testing": "0.0.0-0",
     "@types/node": "^6.0.45",
-    "awesome-typescript-loader": "^2.2.4",
     "istanbul-instrumenter-loader": "^0.2.0",
     "jasmine-core": "^2.4.1",
     "karma": "^1.1.1",
@@ -27,6 +26,7 @@
   "dependencies": {
     "@angular/core": "2.0.0",
     "@angular/forms": "2.0.0",
+    "awesome-typescript-loader": "^2.2.4",
     "babel-core": "^6.11.4",
     "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.14.0",
