@@ -1,6 +1,6 @@
 {
   "name": "ng2-redux-form",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "Build Angular 2 forms with Redux",
   "devDependencies": {
     "@angular/common": "2.0.0",
@@ -8,7 +8,8 @@
     "@angular/platform-browser": "2.0.0",
     "@angular/platform-browser-dynamic": "2.0.0",
     "@angular/testing": "0.0.0-0",
-    "awesome-typescript-loader": "^1.1.1",
+    "@types/node": "^6.0.45",
+    "awesome-typescript-loader": "^2.2.4",
     "istanbul-instrumenter-loader": "^0.2.0",
     "jasmine-core": "^2.4.1",
     "karma": "^1.1.1",
@@ -40,7 +41,6 @@
     "rimraf": "^2.5.4",
     "rxjs": "5.0.0-beta.11",
     "ts-helpers": "^1.1.1",
-    "typings": "^1.0",
     "zone.js": "^0.6.12"
   },
   "peerDependencies": {
@@ -58,12 +58,11 @@
     "build": "cross-env NODE_ENV=production webpack",
     "clean": "rimraf dist",
     "cover": "istanbul report --include=**/chrome/coverage-final.json text text-summary",
-    "postinstall": "npm run typings && npm run build",
+    "postinstall": "npm run build",
     "pretest": "rimraf coverage",
     "test": "cross-env NODE_ENV=development karma start --singleRun true",
     "posttest": "npm run cover",
-    "test:watch": "cross-env NODE_ENV=development karma start --singleRun false",
-    "typings": "rimraf typings && typings install"
+    "test:watch": "cross-env NODE_ENV=development karma start --singleRun false"
   },
   "main": "source/index",
   "typings": "source/index"
