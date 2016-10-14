@@ -63,6 +63,7 @@ module.exports = {
     'redux': true,
     'reflect-metadata': true,
     'rxjs': true,
-    'zone.js': true
+    'zone.js': true,
+    'ng2-redux': true,
   }],
 };
