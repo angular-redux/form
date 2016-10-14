@@ -83,7 +83,7 @@ export class Connect<RootState> {
       });
 
       scheduleMicroTask(() => {
-        this.formSubscription = this.form.valueChanges.debounceTime(0).subscribe(values => this.publish(values));
+        this.formSubscription = (<any>this.form.valueChanges).debounceTime(0).subscribe(values => this.publish(values));
       });
     });
   }
