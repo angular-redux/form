@@ -57,18 +57,13 @@ module.exports = (config) => {
       plugins,
       entry: './source/tests.entry',
       devtool: 'inline-source-map',
-      verbose: false,
       resolve: {
-        extensions: ['', '.webpack.js', '.web.js', '.js', '.ts'],
+        extensions: ['.webpack.js', '.web.js', '.js', '.ts'],
       },
       module: {
-        loaders: combinedLoaders(),
-        postLoaders: config.singleRun
-          ? [ loaders.istanbulInstrumenter ]
-          : [ ],
+        rules: combinedLoaders().concat(config.singleRun ? [loaders.istanbulInstrumenter] : [])
       },
       stats: { colors: true, reasons: true },
-      debug: false,
     },
 
     webpackServer: { noInfo: true },

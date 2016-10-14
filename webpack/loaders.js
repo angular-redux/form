@@ -23,6 +23,7 @@ exports.js = {
 };
 
 exports.istanbulInstrumenter = {
+  enforce: 'post',
   test: /^(.(?!\.test))*\.ts$/,
   loader: 'istanbul-instrumenter-loader',
 };
