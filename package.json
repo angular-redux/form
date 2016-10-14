@@ -1,6 +1,6 @@
 {
   "name": "ng2-redux-form",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "Build Angular 2 forms with Redux",
   "devDependencies": {
     "@angular/common": "2.0.0",
@@ -51,6 +51,7 @@
     "@angular/compiler": "^2.0.0",
     "@angular/core": "^2.0.0",
     "@angular/forms": "^2.0.0",
+    "ng2-redux": "^3.3.2",
     "redux": "^3.0"
   },
   "engines": {
