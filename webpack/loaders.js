@@ -32,3 +32,4 @@ exports.html = {
   test: /\.html$/,
   loader: 'raw',
 };
+

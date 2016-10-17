@@ -22,8 +22,9 @@ import {
   NgReduxForms,
   composeReducers,
   defaultFormReducer,
-  logger,
 } from '../../source';
+
+import {logger} from '../../source/tests.utilities';
 
 @Component({
   selector: 'form-example',

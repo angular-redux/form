@@ -10,10 +10,7 @@ const development = [
   new webpack.SourceMapDevToolPlugin({filename: null, test: /\.ts$/})
 ];
 
-const production = [
-  new webpack.IgnorePlugin(/angular/),
-  new webpack.IgnorePlugin(/rxjs/),
-];
+const production = [];
 
 module.exports = base
   .concat(process.env.NODE_ENV === 'production' ? production : [])
