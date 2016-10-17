@@ -20,6 +20,7 @@
     "node_modules",
     "dist",
     "examples",
-    "index.d.ts"
+    "index.d.ts",
+    "**/*test*.ts"
   ]
 }
