@@ -74,7 +74,7 @@ export class Connect<RootState> {
     }
   }
 
-  private ngAfterViewInit() {
+  private ngAfterContentInit() {
     scheduleMicroTask(() => {
       this.resetState();
 
