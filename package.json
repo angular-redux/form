@@ -8,8 +8,6 @@
     "@angular/platform-browser": "2.0.0",
     "@angular/platform-browser-dynamic": "2.0.0",
     "@angular/testing": "0.0.0-0",
-    "@types/chai": "^3.4.34",
-    "@types/jasmine": "^2.5.35",
     "ng2-redux": "^3.3.2",
     "istanbul-instrumenter-loader": "^0.2.0",
     "jasmine-core": "^2.4.1",
@@ -28,6 +26,8 @@
   "dependencies": {
     "@angular/core": "2.0.0",
     "@angular/forms": "2.0.0",
+    "@types/chai": "^3.4.34",
+    "@types/jasmine": "^2.5.35",
     "@types/node": "^6.0.45",
     "awesome-typescript-loader": "^2.2.4",
     "babel-core": "^6.11.4",
