@@ -1,11 +1,14 @@
 import {Inject, NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-const {NgRedux} = require('ng2-redux');
-
 import {Connect} from './connect';
 import {ConnectArray} from './connect-array';
 import {FormStore} from './form-store';
+import { NgRedux } from 'ng2-redux';
+
+export function formStoreFactory(ngRedux: NgRedux<any>) {
+  return new FormStore(ngRedux)
+}
 
 @NgModule({
   imports: [
@@ -23,7 +26,7 @@ import {FormStore} from './form-store';
   providers: [
     {
       provide: FormStore,
-      useFactory: Inject(NgRedux)(ngRedux => new FormStore(ngRedux)),
+      useFactory: formStoreFactory,
       deps: [NgRedux],
     },
   ]
