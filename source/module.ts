@@ -7,10 +7,6 @@ import {Connect} from './connect';
 import {ConnectArray} from './connect-array';
 import {FormStore} from './form-store';
 
-export function formStoreFactory(ngRedux: NgRedux<any>) {
-  return new FormStore(ngRedux);
-}
-
 @NgModule({
   imports: [
     FormsModule,
@@ -27,7 +23,7 @@ export function formStoreFactory(ngRedux: NgRedux<any>) {
   providers: [
     {
       provide: FormStore,
-      useFactory: formStoreFactory,
+      useClass: FormStore,
       deps: [NgRedux],
     },
   ]

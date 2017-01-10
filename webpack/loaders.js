@@ -2,20 +2,18 @@
 
 exports.css = {
   test: /\.css$/,
-  loader: 'raw',
+  loader: 'raw-loader',
 };
 
 exports.ts = {
   test: /\.ts$/,
-  loader: 'awesome-typescript-loader',
-  query: {
-    babelCore: 'babel-core',
-  },
+  loader: '@ngtools/webpack',
+  exclude: /node_modules/,
 };
 
 exports.js = {
   test: /\.js$/,
-  loader: 'babel',
+  loader: 'babel-loader',
   query: {
     compact: false,
   },
@@ -30,6 +28,6 @@ exports.istanbulInstrumenter = {
 
 exports.html = {
   test: /\.html$/,
-  loader: 'raw',
+  loader: 'raw-loader',
 };
 

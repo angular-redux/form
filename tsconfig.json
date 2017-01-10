@@ -18,6 +18,7 @@
     "useBabel": true,
     "useCache": false
   },
+  "angularCompilerOptions": {},
   "exclude": [
     "node_modules",
     "dist",

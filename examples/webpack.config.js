@@ -26,10 +26,7 @@ module.exports = {
       '.webpack.js',
       '.web.js',
       '.ts',
-      '.js'
-    ],
-    modules: [
-      path.join(__dirname, 'node_modules'),
+      '.js',
     ],
   },
 
@@ -38,14 +35,13 @@ module.exports = {
   module: {
     loaders: [
       loaders.css,
-      loaders.js,
+      //loaders.js,
       loaders.ts,
       loaders.html,
     ],
     noParse: [
       /zone\.js\/dist\/.+/,
       /angular2\/bundles\/.+/,
-      /reflect-metadata/,
     ],
   },
 };

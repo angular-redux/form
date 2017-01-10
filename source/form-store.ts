@@ -1,8 +1,8 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 
 import {NgForm} from '@angular/forms';
 
-const {NgRedux} = require('ng2-redux');
+import {NgRedux} from 'ng2-redux';
 
 import {Action, Store, Unsubscribe} from 'redux';
 
@@ -28,7 +28,7 @@ export class FormStore<RootState> {
   /// calling the constructor of this class manually (from configure.ts),
   /// where a plain store can be cast to an NgRedux. (For our purposes, they
   /// have almost identical shapes.)
-  constructor(@Inject(NgRedux) private store) {}
+  constructor(private store: NgRedux<RootState>) {}
 
   getState() {
     return this.store.getState();

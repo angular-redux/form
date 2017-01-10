@@ -2,7 +2,7 @@ import {flushMicrotasks} from '@angular/core/testing';
 
 import {Iterable} from 'immutable';
 
-const createLogger = require('redux-logger');
+import {createLogger} from 'redux-logger';
 
 export const logger = createLogger({
   level: 'debug',
