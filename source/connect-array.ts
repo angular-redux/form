@@ -10,6 +10,7 @@ import {
   Directive,
   Optional,
   EmbeddedViewRef,
+  OnInit,
 } from '@angular/core';
 import {
   NG_VALUE_ACCESSOR,
@@ -63,7 +64,7 @@ export class ConnectArrayTemplate {
     useExisting: forwardRef(() => ConnectArray)
   }]
 })
-export class ConnectArray<RootState> extends ControlContainer {
+export class ConnectArray extends ControlContainer implements OnInit {
   private stateSubscription: Unsubscribe;
 
   private formSubscription: Subscription;
@@ -79,10 +80,10 @@ export class ConnectArray<RootState> extends ControlContainer {
     @Optional() @Self() @Inject(NG_VALIDATORS) private rawValidators: any[],
     @Optional() @Self() @Inject(NG_ASYNC_VALIDATORS) private rawAsyncValidators: any[],
     @Optional() @Self() @Inject(NG_VALUE_ACCESSOR) valueAccessors: any[],
-    private connection: Connect<RootState>,
+    private connection: Connect,
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
-    private store: FormStore<RootState>
+    private store: FormStore,
   ) {
     super();
 
@@ -100,7 +101,7 @@ export class ConnectArray<RootState> extends ControlContainer {
     this.resetState(this.store.getState());
   }
 
-  private ngOnInit() {
+  ngOnInit() {
     this.formDirective.addControl(<any> this);
   }
 
@@ -140,7 +141,7 @@ export class ConnectArray<RootState> extends ControlContainer {
     this.formDirective.form.removeControl(this.key);
   }
 
-  private resetState(state: RootState) {
+  private resetState(state) {
     if (this.key == null || this.key.length === 0) {
       return; // no state to retreive if no key is set
     }

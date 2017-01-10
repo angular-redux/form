@@ -32,7 +32,7 @@ export interface ControlPair {
 @Directive({
   selector: 'form[connect]',
 })
-export class Connect<RootState> {
+export class Connect {
   @Input('connect') connect: () => (string | number) | Array<string | number>;
 
   private stateSubscription: Unsubscribe;
@@ -40,7 +40,7 @@ export class Connect<RootState> {
   private formSubscription: Subscription;
 
   constructor(
-    private store: FormStore<RootState>,
+    private store: FormStore,
     private form: NgForm
   ) {}
 
@@ -133,7 +133,7 @@ export class Connect<RootState> {
     this.store.valueChanged(this.path, this.form, value);
   }
 
-  private getState(): RootState {
+  private getState() {
     return this.store.getState();
   }
 }
