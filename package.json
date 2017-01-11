@@ -1,6 +1,6 @@
 {
   "name": "ng2-redux-form",
-  "version": "1.0.38",
+  "version": "1.0.39",
   "description": "Build Angular 2 forms with Redux",
   "devDependencies": {
     "@angular/common": "^2.4.2",

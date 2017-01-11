@@ -43,6 +43,7 @@ export class FormStore {
       type: FORM_CHANGED,
       payload: {
         path,
+        form,
         valid: form.valid === true,
         value
       }
