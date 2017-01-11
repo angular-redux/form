@@ -1,7 +1,7 @@
 import { provide } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { NgRedux } from 'ng2-redux';
+import { NgRedux } from '@angular-redux/store';
 
 import { Store } from 'redux';
 
