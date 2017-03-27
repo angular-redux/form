@@ -12,6 +12,7 @@ import {
   NgControl,
 } from '@angular/forms';
 
+// Doesn't exist in Angular 4.
 import {scheduleMicroTask} from '@angular/forms/src/facade/lang';
 
 import {Subscription} from 'rxjs';
