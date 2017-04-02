@@ -26,13 +26,6 @@ import {
   ControlValueAccessor,
 } from '@angular/forms';
 
-// This doesn't exist in Angular 4.
-import {
-  controlPath,
-  setUpFormContainer,
-  selectValueAccessor,
-} from '@angular/forms/src/directives/shared';
-
 import {
   AsyncValidatorFn,
   ValidatorFn,
@@ -49,6 +42,7 @@ import {Subscription} from 'rxjs';
 import {Connect} from './connect';
 import {FormStore} from './form-store';
 import {State} from './state';
+import {controlPath, selectValueAccessor} from './shims';
 
 export class ConnectArrayTemplate {
   constructor(
