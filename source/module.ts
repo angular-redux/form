@@ -3,7 +3,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {NgRedux} from '@angular-redux/store';
 
-import {Connect} from './connect';
+import {ConnectReactiveDirective} from './connect-reactive';
+import {ConnectTemplateDirective} from './connect-template';
 import {ConnectArray} from './connect-array';
 import {FormStore} from './form-store';
 
@@ -17,11 +18,13 @@ export function formStoreFactory(ngRedux: NgRedux<any>) {
     ReactiveFormsModule,
   ],
   declarations: [
-    Connect,
+    ConnectTemplateDirective,
+    ConnectReactiveDirective,
     ConnectArray,
   ],
   exports: [
-    Connect,
+    ConnectTemplateDirective,
+    ConnectReactiveDirective,
     ConnectArray,
   ],
   providers: [

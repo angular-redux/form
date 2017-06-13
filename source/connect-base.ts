@@ -27,21 +27,15 @@ export interface ControlPair {
   control: AbstractControl;
 }
 
-@Directive({
-  selector: 'form[connect]',
-})
-export class Connect {
-  @Input('connect') connect: () => (string | number) | Array<string | number>;
+export class ConnectBase {
 
+  @Input('connect') connect: () => (string | number) | Array<string | number>;
   private stateSubscription: Unsubscribe;
 
   private formSubscription: Subscription;
-
-  constructor(
-    private store: FormStore,
-    private form: NgForm
-  ) {}
-
+  protected store: FormStore;
+  protected form;
+  
   public get path(): Array<string> {
     const path = typeof this.connect === 'function'
       ? this.connect()
@@ -112,7 +106,15 @@ export class Connect {
   }
 
   private resetState() {
-    const children = this.descendants([], this.form.control);
+    var formElement;
+    if (this.form.control === undefined){
+      formElement = this.form;
+    }
+    else{
+        formElement = this.form.control;
+      }
+
+    const children = this.descendants([], formElement);
 
     children.forEach(c => {
       const {path, control} = c;
