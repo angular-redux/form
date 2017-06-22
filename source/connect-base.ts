@@ -12,15 +12,15 @@ import {
   NgControl,
 } from '@angular/forms';
 
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import {Unsubscribe} from 'redux';
+import { Unsubscribe } from 'redux';
 
 import 'rxjs/add/operator/debounceTime';
 
-import {FormException} from './form-exception';
-import {FormStore} from './form-store';
-import {State} from './state';
+import { FormException } from './form-exception';
+import { FormStore } from './form-store';
+import { State } from './state';
 
 export interface ControlPair {
   path: Array<string>;
@@ -35,7 +35,7 @@ export class ConnectBase {
   private formSubscription: Subscription;
   protected store: FormStore;
   protected form;
-  
+
   public get path(): Array<string> {
     const path = typeof this.connect === 'function'
       ? this.connect()
@@ -47,16 +47,16 @@ export class ConnectBase {
           return [];
         }
         if (Array.isArray(path)) {
-          return <Array<string>> path;
+          return <Array<string>>path;
         }
       case 'string':
-        return (<string> path).split(/\./g);
+        return (<string>path).split(/\./g);
       default: // fallthrough above (no break)
         throw new Error(`Cannot determine path to object: ${JSON.stringify(path)}`);
     }
   }
 
-  ngOnDestroy () {
+  ngOnDestroy() {
     if (this.formSubscription) {
       this.formSubscription.unsubscribe();
     }
@@ -92,11 +92,11 @@ export class ConnectBase {
     }
     else if (formElement instanceof FormGroup) {
       for (const k of Object.keys(formElement.controls)) {
-        pairs.push({path:path.concat([k]), control: formElement.controls[k]});
+        pairs.push({ path: path.concat([k]), control: formElement.controls[k] });
       }
     }
     else if (formElement instanceof NgControl || formElement instanceof FormControl) {
-      return [{path: path, control: <any> formElement}];
+      return [{ path: path, control: <any>formElement }];
     }
     else {
       throw new Error(`Unknown type of form element: ${formElement.constructor.name}`);
@@ -107,22 +107,22 @@ export class ConnectBase {
 
   private resetState() {
     var formElement;
-    if (this.form.control === undefined){
+    if (this.form.control === undefined) {
       formElement = this.form;
     }
-    else{
-        formElement = this.form.control;
-      }
+    else {
+      formElement = this.form.control;
+    }
 
     const children = this.descendants([], formElement);
 
     children.forEach(c => {
-      const {path, control} = c;
+      const { path, control } = c;
 
       const value = State.get(this.getState(), this.path.concat(c.path));
 
       if (control.value !== value) {
-        const phonyControl = <any>{path: path};
+        const phonyControl = <any>{ path: path };
 
         this.form.updateModel(phonyControl, value);
       }

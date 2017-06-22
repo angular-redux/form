@@ -208,7 +208,7 @@ From there, `@angular-redux/form` is able to take that path and extract the valu
 that element from the Redux state.
 
 #### Reactive Forms
-The value in "connect" attribute is the value that will show up in the Redux store. The formGrup value is the name of hte object in your code that represents the form group.
+The value in "connect" attribute is the value that will show up in the Redux store. The formGroup value is the name of the object in your code that represents the form group.
 
 ```html
   <form connect="myForm" [formGroup]="loginForm">
