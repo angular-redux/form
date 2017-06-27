@@ -13,7 +13,7 @@ import {ConnectBase} from './connect-base';
 
 // For reactive forms (without implicit NgForm)
 @Directive({ selector: 'form[connect][formGroup]' })
-export class ConnectReactiveDirective extends ConnectBase {
+export class ReactiveConnect extends ConnectBase {
   @Input('formGroup') form;
 
   constructor(
