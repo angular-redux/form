@@ -1,35 +1,55 @@
-import { Input } from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional
+} from '@angular/core';
 
 import {
   AbstractControl,
-  FormControl,
-  FormGroup,
   FormArray,
-  NgControl,
+  FormGroup,
+  NgForm
 } from '@angular/forms';
 
-import { Subscription } from 'rxjs';
-
-import { Unsubscribe } from 'redux';
+import {Subscription} from 'rxjs/Subscription';
+import {ReplaySubject} from "rxjs/ReplaySubject";
 
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/skipUntil';
 
-import { FormStore } from '../form-store';
-import { State } from '../state';
+import {FormStore} from '../form-store';
+import {State} from '../state';
 
-export interface ControlPair {
-  path: Array<string>;
-  control: AbstractControl;
-}
+@Directive({selector: 'form[connect]'})
+export class Connect implements OnInit, OnDestroy, AfterViewInit {
 
-export class ConnectBase {
+  @Input('connect') private readonly connect: () => (string | number) | Array<string | number>;
+  @Input('connectDebounce') private readonly connectDebounce = 250;
+  @Input('formGroup') private readonly formGroup: FormGroup;
 
-  @Input('connect') connect: () => (string | number) | Array<string | number>;
-  private stateSubscription: Unsubscribe;
+  private subscription: Subscription = new Subscription();
 
-  private formSubscription: Subscription;
-  protected store: FormStore;
-  protected form: any;
+  private form: FormGroup;
+
+  private initialized = new ReplaySubject<boolean>();
+
+  constructor(private store: FormStore,
+              @Optional() private ngForm: NgForm) {
+  }
+
+  ngOnInit(): void {
+    if (this.formGroup) {
+      this.form = this.formGroup;
+    } else if (this.ngForm) {
+      this.form = this.ngForm.form;
+    } else {
+      console.error('Invalid connect configuration, no FormGroup found!');
+    }
+  }
 
   public get path(): Array<string> {
     const path = typeof this.connect === 'function'
@@ -51,85 +71,166 @@ export class ConnectBase {
     }
   }
 
+  get valuePath(): Array<string> {
+    return [...this.path, 'value']
+  }
+
+  get validityPath(): Array<string> {
+    return [...this.path, 'validity']
+  }
+
+  get statusPath(): Array<string> {
+    return [...this.path, 'status']
+  }
+
   ngOnDestroy() {
-    if (this.formSubscription) {
-      this.formSubscription.unsubscribe();
-    }
-
-    if (typeof this.stateSubscription === 'function') {
-      this.stateSubscription(); // unsubscribe
-    }
+    this.subscription.unsubscribe();
   }
 
-  ngAfterContentInit() {
-    Promise.resolve().then(() => {
-      this.resetState();
-
-      this.stateSubscription = this.store.subscribe(() => this.resetState());
-
-      Promise.resolve().then(() => {
-        this.formSubscription = (<any>this.form.valueChanges)
-          .debounceTime(0)
-          .subscribe((values: any) => this.publish(values));
-      });
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.subscription.add(
+        this.form.valueChanges
+          .skipUntil(this.initialized.asObservable())
+          .debounceTime(this.connectDebounce)
+          .map(() => this.form.getRawValue())
+          .distinctUntilChanged((x: any, y: any) => Connect.deepEquals(x, y))
+          .subscribe((v: any) => this.publishValueChange(v))
+      );
+      this.subscription.add(
+        this.form.statusChanges
+          .skipUntil(this.initialized.asObservable())
+          .debounceTime(this.connectDebounce)
+          .map(() => Connect.buildFormStatus(this.form))
+          .distinctUntilChanged((x, y) => Connect.deepEquals(x, y))
+          .subscribe((v) => this.publishStatusChange(v))
+      );
+      this.subscription.add(
+        this.form.statusChanges
+          .skipUntil(this.initialized.asObservable())
+          .debounceTime(this.connectDebounce)
+          .map(() => Connect.buildFormValidity(this.form))
+          .distinctUntilChanged((x, y) => Connect.deepEquals(x, y))
+          .subscribe((c) => this.publishValidityChange(c))
+      );
+      this.subscription.add(
+        this.store.select(this.valuePath)
+          .subscribe((value) => {
+            if (!value) {
+              // init the form if nothing is in store yet
+              value = this.form.getRawValue();
+              this.init(value);
+            }
+            this.form.setValue(value);
+            if (!this.initialized.isStopped) {
+              setTimeout(() => {
+                this.initialized.next(true);
+                this.initialized.complete();
+              });
+            }
+          }));
     });
   }
 
-  private descendants(path: Array<string>, formElement: any): Array<ControlPair> {
-    const pairs = new Array<ControlPair>();
+  private init(value: any) {
+    this.store.init(this.path, {
+      value: value,
+      status: Connect.buildFormStatus(this.form),
+      validity: Connect.buildFormValidity(this.form)
+    });
+  }
 
-    if (formElement instanceof FormArray) {
-      formElement.controls.forEach((c, index) => {
-        for (const d of this.descendants((<any>path).concat([index]), c)) {
-          pairs.push(d);
+  private publishValueChange(value: any) {
+    this.store.valueChanged(this.valuePath, value);
+  }
+
+  private publishStatusChange(v: any) {
+    this.store.statusChanged(this.statusPath, v);
+  }
+
+  private publishValidityChange(v: any) {
+    this.store.validityChanged(this.validityPath, v);
+  }
+
+  private static buildFormValidity(control: AbstractControl) {
+    let controls: any;
+    if (control instanceof FormGroup) {
+      const keys = Object.keys(control.controls);
+      if (keys.length > 0) {
+        controls = {};
+        keys.forEach((key) => controls[key] = Connect.buildFormValidity(control.controls[key]));
+      }
+    }
+    if (control instanceof FormArray) {
+      controls = [];
+      control.controls.forEach((c) => controls.push(Connect.buildFormValidity(c)));
+    }
+    return {
+      valid: control.valid,
+      invalid: control.invalid,
+      errors: control.errors,
+      controls
+    };
+  }
+
+  private static buildFormStatus(control: AbstractControl) {
+    let controls: any;
+    if (control instanceof FormGroup) {
+      const keys = Object.keys(control.controls);
+      if (keys.length > 0) {
+        controls = {};
+        keys.forEach((key) => controls[key] = Connect.buildFormStatus(control.controls[key]));
+      }
+    }
+    if (control instanceof FormArray) {
+      controls = [];
+      control.controls.forEach((c) => controls.push(Connect.buildFormStatus(c)));
+    }
+    return {
+      touched: control.touched,
+      untouched: control.untouched,
+      pristine: control.pristine,
+      dirty: control.dirty,
+      pending: control.pending,
+      enabled: control.enabled,
+      disabled: control.disabled,
+      controls
+    };
+  }
+
+  private static deepEquals(x: any, y: any): boolean {
+    if (x === y) {
+      return true; // if both x and y are null or undefined and exactly the same
+    } else if (!(x instanceof Object) || !(y instanceof Object)) {
+      return false; // if they are not strictly equal, they both need to be Objects
+    } else if (x.constructor !== y.constructor) {
+      // they must have the exact same prototype chain, the closest we can do is
+      // test their constructor.
+      return false;
+    } else {
+      for (const p in x) {
+        if (!x.hasOwnProperty(p)) {
+          continue; // other properties were tested using x.constructor === y.constructor
         }
-      })
-    }
-    else if (formElement instanceof FormGroup) {
-      for (const k of Object.keys(formElement.controls)) {
-        pairs.push({ path: path.concat([k]), control: formElement.controls[k] });
+        if (!y.hasOwnProperty(p)) {
+          return false; // allows to compare x[ p ] and y[ p ] when set to undefined
+        }
+        if (x[p] === y[p]) {
+          continue; // if they have the same strict value or identity then they are equal
+        }
+        if (typeof (x[p]) !== 'object') {
+          return false; // Numbers, Strings, Functions, Booleans must be strictly equal
+        }
+        if (!this.deepEquals(x[p], y[p])) {
+          return false;
+        }
       }
-    }
-    else if (formElement instanceof NgControl || formElement instanceof FormControl) {
-      return [{ path: path, control: <any>formElement }];
-    }
-    else {
-      throw new Error(`Unknown type of form element: ${formElement.constructor.name}`);
-    }
-
-    return pairs.filter(p => {
-        const parent = (p.control as any)._parent;
-        return parent === this.form.control || parent === this.form;
-    });
-  }
-
-  private resetState() {
-    var formElement;
-    if (this.form.control === undefined) {
-      formElement = this.form;
-    }
-    else {
-      formElement = this.form.control;
-    }
-
-    const children = this.descendants([], formElement);
-
-    children.forEach(c => {
-      const { path, control } = c;
-
-      const value = State.get(this.getState(), this.path.concat(path));
-
-      if (control.value !== value) {
-        control.setValue(value);
+      for (const p in y) {
+        if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) {
+          return false;
+        }
       }
-    });
-  }
-
-  private publish(value: any) {
-    this.store.valueChanged(this.path, this.form, value);
-  }
-
-  private getState() {
-    return this.store.getState();
+      return true;
+    }
   }
 }

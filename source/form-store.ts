@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-
-import {NgForm} from '@angular/forms';
-
-import {NgRedux} from '@angular-redux/store';
-
+import {
+    NgRedux,
+    Selector
+} from '@angular-redux/store';
 import {Action, Unsubscribe} from 'redux';
+import {Observable} from 'rxjs/Observable';
 
 export interface AbstractStore<RootState> {
   /// Dispatch an action
@@ -17,7 +17,10 @@ export interface AbstractStore<RootState> {
   subscribe(fn: (state: RootState) => void): Unsubscribe;
 }
 
-export const FORM_CHANGED = '@@angular-redux/form/FORM_CHANGED';
+export const INIT = '@@angular-redux/form/INIT';
+export const VALUE_CHANGED = '@@angular-redux/form/VALUE_CHANGED';
+export const VALIDITY_CHANGED = '@@angular-redux/form/VALIDITY_CHANGED';
+export const STATUS_CHANGED = '@@angular-redux/form/STATUS_CHANGED';
 
 @Injectable()
 export class FormStore {
@@ -38,13 +41,45 @@ export class FormStore {
     return this.store.subscribe(() => fn(this.getState()));
   }
 
-  valueChanged<T>(path: string[], form: NgForm, value: T) {
+  select<T>(selector: Selector<any, T>): Observable<T> {
+    return this.store.select(selector);
+  }
+
+  init(path: string[], value: any) {
     this.store.dispatch({
-      type: FORM_CHANGED,
+      type: INIT,
       payload: {
         path,
-        form,
-        valid: form.valid === true,
+        value
+      }
+    });
+  }
+
+  valueChanged(path: string[], value: any) {
+    this.store.dispatch({
+      type: VALUE_CHANGED,
+      payload: {
+        path,
+        value
+      }
+    });
+  }
+
+  validityChanged(path: string[], value: any) {
+    this.store.dispatch({
+      type: VALIDITY_CHANGED,
+      payload: {
+        path,
+        value
+      }
+    });
+  }
+
+  statusChanged(path: string[], value: any) {
+    this.store.dispatch({
+      type: STATUS_CHANGED,
+      payload: {
+        path,
         value
       }
     });

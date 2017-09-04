@@ -36,7 +36,7 @@ import {
 } from '@angular/forms';
 import {Unsubscribe} from 'redux';
 
-import {ConnectBase} from '../connect';
+import {Connect} from '../connect';
 import {FormStore} from '../form-store';
 import {State} from '../state';
 import {controlPath, selectValueAccessor} from '../shims';
@@ -70,7 +70,7 @@ export class ConnectArray extends ControlContainer implements OnInit {
     @Optional() @Self() @Inject(NG_VALIDATORS) private rawValidators: any[],
     @Optional() @Self() @Inject(NG_ASYNC_VALIDATORS) private rawAsyncValidators: any[],
     @Optional() @Self() @Inject(NG_VALUE_ACCESSOR) valueAccessors: any[],
-    private connection: ConnectBase,
+    private connection: Connect,
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
     private store: FormStore,
@@ -136,7 +136,7 @@ export class ConnectArray extends ControlContainer implements OnInit {
       return; // no state to retreive if no key is set
     }
 
-    const iterable = State.get(state, this.connection.path.concat(this.path));
+    const iterable = State.get(state, this.connection.valuePath.concat(this.path)) || [];
 
     let index = 0;
 
@@ -167,7 +167,7 @@ export class ConnectArray extends ControlContainer implements OnInit {
       }
 
       ++index;
-    };
+    }
 
     while (this.viewContainerRef.length > index) {
       this.viewContainerRef.remove(this.viewContainerRef.length - 1);
@@ -237,14 +237,14 @@ export class ConnectArray extends ControlContainer implements OnInit {
       }
 
       for (const value of iterable) {
-        const transformed = this.transform(array, value)
+        const transformed = this.transform(array, value);
         if (transformed) {
           array.push(transformed);
         }
       }
 
       return array;
-    }
+    };
 
     const associate = (value: any): FormGroup => {
       const group = new FormGroup({});
