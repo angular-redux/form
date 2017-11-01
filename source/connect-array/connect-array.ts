@@ -57,13 +57,14 @@ export class ConnectArrayTemplate {
   }]
 })
 export class ConnectArray extends ControlContainer implements OnInit {
-  private stateSubscription: Unsubscribe;
 
   private array = new FormArray([]);
 
-  private valueAccessor: ControlValueAccessor;
-
   private key: string;
+
+  public valueAccessor: ControlValueAccessor;
+
+  public stateSubscription: Unsubscribe;
 
   constructor(
     @Optional() @Host() @SkipSelf() private parent: ControlContainer,
