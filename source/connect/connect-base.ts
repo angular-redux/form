@@ -17,8 +17,6 @@ import 'rxjs/add/operator/debounceTime';
 import { FormStore } from '../form-store';
 import { State } from '../state';
 
-import { Iterable } from 'immutable';
-
 export interface ControlPair {
   path: Array<string>;
   control: AbstractControl;
