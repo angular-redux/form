@@ -122,6 +122,14 @@ Both `NgRedux<T>` and `Redux.Store<T>` conform to this shape. If you have a more
 complicated use-case that is not covered here, you could even create your own store
 shim as long as it conforms to the shape of `AbstractStore<RootState>`.
 
+#### Input debounce
+
+To debounce emitted FORM_CHANGED actions simply specify the desired debounce time in milliseconds on the form:
+
+```html
+<form connect="myForm" debounce="500">
+```
+
 ### How the bindings work
 
 The bindings work by inspecting the shape of your form and then binding to a Redux
