@@ -17,6 +17,8 @@ import 'rxjs/add/operator/debounceTime';
 import { FormStore } from '../form-store';
 import { State } from '../state';
 
+import { Iterable } from 'immutable';
+
 export interface ControlPair {
   path: Array<string>;
   control: AbstractControl;
@@ -25,11 +27,15 @@ export interface ControlPair {
 export class ConnectBase {
 
   @Input('connect') connect: () => (string | number) | Array<string | number>;
+  @Input('debounce') debounce: number;
   private stateSubscription: Unsubscribe;
 
   private formSubscription: Subscription;
   protected store: FormStore;
   protected form: any;
+  protected get changeDebounce(): number {
+    return 'number' === typeof this.debounce || ('string' === typeof this.debounce && String(this.debounce).match(/^[0-9]+(\.[0-9]+)?$/)) ? Number(this.debounce) : 0;
+  }
 
   public get path(): Array<string> {
     const path = typeof this.connect === 'function'
@@ -63,13 +69,13 @@ export class ConnectBase {
 
   ngAfterContentInit() {
     Promise.resolve().then(() => {
-      this.resetState();
+      this.resetState(false);
 
-      this.stateSubscription = this.store.subscribe(() => this.resetState());
+      this.stateSubscription = this.store.subscribe(() => this.resetState(true));
 
       Promise.resolve().then(() => {
         this.formSubscription = (<any>this.form.valueChanges)
-          .debounceTime(0)
+          .debounceTime(this.changeDebounce)
           .subscribe((values: any) => this.publish(values));
       });
     });
@@ -97,11 +103,12 @@ export class ConnectBase {
       throw new Error(`Unknown type of form element: ${formElement.constructor.name}`);
     }
 
-    return pairs.filter(p => (<any>p.control)._parent === this.form.control);
+    return pairs.filter(p => (<any>p.control)._parent === this.form.control || (<any>p.control)._parent === this.form);
   }
 
-  private resetState() {
+  private resetState(emitEvent: boolean) {
     var formElement;
+    
     if (this.form.control === undefined) {
       formElement = this.form;
     }
@@ -114,12 +121,12 @@ export class ConnectBase {
     children.forEach(c => {
       const { path, control } = c;
 
-      const value = State.get(this.getState(), this.path.concat(c.path));
+      const value = State.get(this.getState(), this.path.concat(path));
 
       if (control.value !== value) {
         const phonyControl = <any>{ path: path };
 
-        this.form.updateModel(phonyControl, value);
+        control.setValue(value, {emitEvent});
       }
     });
   }
