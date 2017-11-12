@@ -123,7 +123,7 @@ export class ConnectBase {
       const newValueIsEmpty: boolean = 'undefined' === typeof value || null === value || ('string' === typeof value && '' === value);
       const oldValueIsEmpty: boolean = 'undefined' === typeof control.value || null === control.value || ('string' === typeof control.value && '' === control.value);
 
-      if (oldValueIsEmpty !== newValueIsEmpty && control.value !== value) {
+      if (oldValueIsEmpty !== newValueIsEmpty || (!oldValueIsEmpty && !newValueIsEmpty && control.value !== value)) {
         control.setValue(newValueIsEmpty ? '' : value, {emitEvent});
       }
     });
