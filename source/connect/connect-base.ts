@@ -67,8 +67,10 @@ export class ConnectBase {
 
   ngAfterContentInit() {
     Promise.resolve().then(() => {
+      // This is the first "change" of the form (setting initial values from the store) and thus should not emit a "changed" event
       this.resetState(false);
 
+      // Any further changes on the state are due to application flow (e.g. user interaction triggering state changes) and thus have to trigger "changed" events
       this.stateSubscription = this.store.subscribe(() => this.resetState(true));
 
       Promise.resolve().then(() => {
@@ -104,7 +106,7 @@ export class ConnectBase {
     return pairs.filter(p => (<any>p.control)._parent === this.form.control || (<any>p.control)._parent === this.form);
   }
 
-  private resetState(emitEvent: boolean) {
+  private resetState(emitEvent: boolean = true) {
     var formElement;
     
     if (this.form.control === undefined) {
@@ -123,8 +125,15 @@ export class ConnectBase {
       const newValueIsEmpty: boolean = 'undefined' === typeof value || null === value || ('string' === typeof value && '' === value);
       const oldValueIsEmpty: boolean = 'undefined' === typeof control.value || null === control.value || ('string' === typeof control.value && '' === control.value);
 
+      // setValue() should only be called upon "real changes", meaning "null" and "undefined" should be treated equal to "" (empty string)
+      // newValueIsEmpty: true,  oldValueIsEmpty: true  => no change
+      // newValueIsEmpty: true,  oldValueIsEmpty: false => change
+      // newValueIsEmpty: false, oldValueIsEmpty: true  => change
+      // newValueIsEmpty: false, oldValueIsEmpty: false =>
+      //                        control.value === value => no change
+      //                        control.value !== value => change
       if (oldValueIsEmpty !== newValueIsEmpty || (!oldValueIsEmpty && !newValueIsEmpty && control.value !== value)) {
-        control.setValue(newValueIsEmpty ? '' : value, {emitEvent});
+        control.setValue(newValueIsEmpty ? '' : value, {emitEvent: !!emitEvent});
       }
     });
   }
