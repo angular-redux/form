@@ -107,6 +107,8 @@ export class ConnectBase {
   }
 
   private resetState(emitEvent: boolean = true) {
+    emitEvent = !!emitEvent ? true : false;
+    
     var formElement;
     
     if (this.form.control === undefined) {
@@ -133,7 +135,7 @@ export class ConnectBase {
       //                        control.value === value => no change
       //                        control.value !== value => change
       if (oldValueIsEmpty !== newValueIsEmpty || (!oldValueIsEmpty && !newValueIsEmpty && control.value !== value)) {
-        control.setValue(newValueIsEmpty ? '' : value, {emitEvent: !!emitEvent});
+        control.setValue(newValueIsEmpty ? '' : value, {emitEvent});
       }
     });
   }
