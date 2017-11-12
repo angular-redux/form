@@ -119,12 +119,12 @@ export class ConnectBase {
     children.forEach(c => {
       const { path, control } = c;
 
-      const value = State.get(this.getState(), this.path.concat(path));
+      const value                    = State.get(this.getState(), this.path.concat(path));
+      const newValueIsEmpty: boolean = 'undefined' === typeof value || null === value || ('string' === typeof value && '' === value);
+      const oldValueIsEmpty: boolean = 'undefined' === typeof control.value || null === control.value || ('string' === typeof control.value && '' === control.value);
 
-      if (control.value !== value) {
-        const phonyControl = <any>{ path: path };
-
-        control.setValue(value, {emitEvent});
+      if (oldValueIsEmpty !== newValueIsEmpty && control.value !== value) {
+        control.setValue(newValueIsEmpty ? '' : value, {emitEvent});
       }
     });
   }
