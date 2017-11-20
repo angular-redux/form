@@ -127,7 +127,7 @@ export class ConnectBase {
       const newValueIsEmpty: boolean = 'undefined' === typeof value || null === value || ('string' === typeof value && '' === value);
       const oldValueIsEmpty: boolean = 'undefined' === typeof control.value || null === control.value || ('string' === typeof control.value && '' === control.value);
 
-      // setValue() should only be called upon "real changes", meaning "null" and "undefined" should be treated equal to "" (empty string)
+      // patchValue() should only be called upon "real changes", meaning "null" and "undefined" should be treated equal to "" (empty string)
       // newValueIsEmpty: true,  oldValueIsEmpty: true  => no change
       // newValueIsEmpty: true,  oldValueIsEmpty: false => change
       // newValueIsEmpty: false, oldValueIsEmpty: true  => change
@@ -135,7 +135,7 @@ export class ConnectBase {
       //                        control.value === value => no change
       //                        control.value !== value => change
       if (oldValueIsEmpty !== newValueIsEmpty || (!oldValueIsEmpty && !newValueIsEmpty && control.value !== value)) {
-        control.setValue(newValueIsEmpty ? '' : value, {emitEvent});
+        control.patchValue(newValueIsEmpty ? '' : value, {emitEvent});
       }
     });
   }
