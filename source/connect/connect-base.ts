@@ -93,7 +93,13 @@ export class ConnectBase {
     }
     else if (formElement instanceof FormGroup) {
       for (const k of Object.keys(formElement.controls)) {
-        pairs.push({ path: path.concat([k]), control: formElement.controls[k] });
+        // If the control is a FormGroup or FormArray get the descendants of the the control instead of the control itself to always patch fields, not groups/arrays
+        if(formElement.controls[k] instanceof FormArray || formElement.controls[k] instanceof FormGroup) {
+          pairs.push(...this.descendants(path.concat([k]), formElement.controls[k]));
+        }
+        else {
+          pairs.push({ path: path.concat([k]), control: formElement.controls[k] });
+        }
       }
     }
     else if (formElement instanceof NgControl || formElement instanceof FormControl) {
@@ -103,7 +109,7 @@ export class ConnectBase {
       throw new Error(`Unknown type of form element: ${formElement.constructor.name}`);
     }
 
-    return pairs.filter(p => (<any>p.control)._parent === this.form.control || (<any>p.control)._parent === this.form);
+    return pairs;
   }
 
   private resetState(emitEvent: boolean = true) {
