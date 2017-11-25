@@ -1,8 +1,8 @@
-export * from './compose-reducers';
-export * from './form-reducer';
-export * from './form-exception';
-export * from './form-store';
-export * from './configure';
-export * from './connect';
-export * from './connect-array';
-export * from './module';
+export {composeReducers} from './compose-reducers';
+export {defaultFormReducer} from './form-reducer';
+export {FormException} from './form-exception';
+export {AbstractStore, FORM_CHANGED, FormStore} from './form-store';
+export {provideReduxForms} from './configure';
+export {NgReduxFormConnectModule, Connect, ConnectBase, ReactiveConnect} from './connect/index';
+export {NgReduxFormConnectArrayModule, ConnectArray} from './connect-array/index';
+export {NgReduxFormModule} from './module';
