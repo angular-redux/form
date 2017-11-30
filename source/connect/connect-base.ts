@@ -25,11 +25,15 @@ export interface ControlPair {
 export class ConnectBase {
 
   @Input('connect') connect: () => (string | number) | Array<string | number>;
+  @Input('debounce') debounce: number;
   private stateSubscription: Unsubscribe;
 
   private formSubscription: Subscription;
   protected store: FormStore;
   protected form: any;
+  protected get changeDebounce(): number {
+    return 'number' === typeof this.debounce || ('string' === typeof this.debounce && String(this.debounce).match(/^[0-9]+(\.[0-9]+)?$/)) ? Number(this.debounce) : 0;
+  }
 
   public get path(): Array<string> {
     const path = typeof this.connect === 'function'
@@ -63,13 +67,15 @@ export class ConnectBase {
 
   ngAfterContentInit() {
     Promise.resolve().then(() => {
-      this.resetState();
+      // This is the first "change" of the form (setting initial values from the store) and thus should not emit a "changed" event
+      this.resetState(false);
 
-      this.stateSubscription = this.store.subscribe(() => this.resetState());
+      // Any further changes on the state are due to application flow (e.g. user interaction triggering state changes) and thus have to trigger "changed" events
+      this.stateSubscription = this.store.subscribe(() => this.resetState(true));
 
       Promise.resolve().then(() => {
         this.formSubscription = (<any>this.form.valueChanges)
-          .debounceTime(0)
+          .debounceTime(this.changeDebounce)
           .subscribe((values: any) => this.publish(values));
       });
     });
@@ -87,7 +93,13 @@ export class ConnectBase {
     }
     else if (formElement instanceof FormGroup) {
       for (const k of Object.keys(formElement.controls)) {
-        pairs.push({ path: path.concat([k]), control: formElement.controls[k] });
+        // If the control is a FormGroup or FormArray get the descendants of the the control instead of the control itself to always patch fields, not groups/arrays
+        if(formElement.controls[k] instanceof FormArray || formElement.controls[k] instanceof FormGroup) {
+          pairs.push(...this.descendants(path.concat([k]), formElement.controls[k]));
+        }
+        else {
+          pairs.push({ path: path.concat([k]), control: formElement.controls[k] });
+        }
       }
     }
     else if (formElement instanceof NgControl || formElement instanceof FormControl) {
@@ -97,11 +109,14 @@ export class ConnectBase {
       throw new Error(`Unknown type of form element: ${formElement.constructor.name}`);
     }
 
-    return pairs.filter(p => (<any>p.control)._parent === this.form.control);
+    return pairs;
   }
 
-  private resetState() {
+  private resetState(emitEvent: boolean = true) {
+    emitEvent = !!emitEvent ? true : false;
+    
     var formElement;
+    
     if (this.form.control === undefined) {
       formElement = this.form;
     }
@@ -114,12 +129,19 @@ export class ConnectBase {
     children.forEach(c => {
       const { path, control } = c;
 
-      const value = State.get(this.getState(), this.path.concat(c.path));
+      const value                    = State.get(this.getState(), this.path.concat(path));
+      const newValueIsEmpty: boolean = 'undefined' === typeof value || null === value || ('string' === typeof value && '' === value);
+      const oldValueIsEmpty: boolean = 'undefined' === typeof control.value || null === control.value || ('string' === typeof control.value && '' === control.value);
 
-      if (control.value !== value) {
-        const phonyControl = <any>{ path: path };
-
-        this.form.updateModel(phonyControl, value);
+      // patchValue() should only be called upon "real changes", meaning "null" and "undefined" should be treated equal to "" (empty string)
+      // newValueIsEmpty: true,  oldValueIsEmpty: true  => no change
+      // newValueIsEmpty: true,  oldValueIsEmpty: false => change
+      // newValueIsEmpty: false, oldValueIsEmpty: true  => change
+      // newValueIsEmpty: false, oldValueIsEmpty: false =>
+      //                        control.value === value => no change
+      //                        control.value !== value => change
+      if (oldValueIsEmpty !== newValueIsEmpty || (!oldValueIsEmpty && !newValueIsEmpty && control.value !== value)) {
+        control.patchValue(newValueIsEmpty ? '' : value, {emitEvent});
       }
     });
   }

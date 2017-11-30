@@ -4,6 +4,7 @@ logs
 **/npm-debug.log*
 
 .idea
+.settings
 
 # Runtime data
 pids
@@ -50,3 +51,5 @@ source/*ngfactory.ts
 source/*ngsummary.json
 
 *.tgz
+/.project
+/.tern-project

@@ -36,9 +36,13 @@ export abstract class State {
       else if (deepValue instanceof Map) {
         deepValue = (<Map<string, any>> <any> deepValue).get(k);
       }
-      else {
+      else if('object' === typeof deepValue && !Array.isArray(deepValue) && null !== deepValue) {
         deepValue = (deepValue as any)[k];
       }
+      else {
+        return undefined;
+      }
+      
 
       if (typeof fn === 'function') {
         const transformed = fn(parent, k, path.slice(path.indexOf(k) + 1), deepValue);

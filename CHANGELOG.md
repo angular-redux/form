@@ -1,3 +1,7 @@
+# 6.7.0 - Fix reactive forms, support custom debounce time for form inputs
+
+* https://github.com/angular-redux/form/pull/48
+
 # 6.5.1 - Support typescript unused checks
 
 * https://github.com/angular-redux/form/pull/32
