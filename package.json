@@ -48,10 +48,10 @@
   },
   "peerDependencies": {
     "@angular-redux/store": "^6.3.0",
-    "@angular/common": "^2.4.0 || ^4.0.0",
-    "@angular/compiler": "^2.4.0 || ^4.0.0",
-    "@angular/core": "^2.4.0 || ^4.0.0",
-    "@angular/forms": "^2.4.0 || ^4.0.0",
+    "@angular/common": "^2.4.0 || ^4.0.0 || ^5.0.0",
+    "@angular/compiler": "^2.4.0 || ^4.0.0 || ^5.0.0",
+    "@angular/core": "^2.4.0 || ^4.0.0 || ^5.0.0",
+    "@angular/forms": "^2.4.0 || ^4.0.0 || ^5.0.0",
     "redux": "^3.0"
   },
   "engines": {
@@ -61,11 +61,13 @@
     "prebuild": "npm run clean",
     "build": "ngc",
     "clean": "rimraf dist",
-    "cover": "istanbul report --include=**/chrome/coverage-final.json text text-summary",
+    "cover":
+      "istanbul report --include=**/chrome/coverage-final.json text text-summary",
     "pretest": "rimraf coverage",
     "test": "cross-env NODE_ENV=development karma start --singleRun true",
     "posttest": "npm run cover",
-    "test:watch": "cross-env NODE_ENV=development karma start --singleRun false",
+    "test:watch":
+      "cross-env NODE_ENV=development karma start --singleRun false",
     "prepublish": "npm run build"
   },
   "main": "dist/source/index.js",
