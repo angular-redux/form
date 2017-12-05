@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es5",
+    "target": "es2017",
     "lib": ["es6", "dom"],
     "types": ["node", "chai", "jasmine"],
     "moduleResolution": "node",
@@ -30,11 +30,5 @@
     "strictMetadataEmit": true,
     "skipTemplateCodegen": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "examples",
-    "index.d.ts",
-    "**/*test*.ts"
-  ]
+  "exclude": ["node_modules", "dist", "examples", "index.d.ts", "**/*test*.ts"]
 }

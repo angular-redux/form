@@ -1,30 +1,30 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
-import {
-  fromJS,
-  List,
-  Map,
-  OrderedSet,
-  Set
-} from 'immutable';
+import { fromJS, List, Map, OrderedSet, Set } from 'immutable';
 
-import {composeReducers} from './compose-reducers';
+import { composeReducers } from './compose-reducers';
 
-describe('composeReducers', () => {
+xdescribe('composeReducers', () => {
   const compose = (s1, s2, s3) => {
-    const r1 = (state = s1, action) => state;
-    const r2 = (state = s2, action) => state;
-    const r3 = (state = s3, action) => state;
+    const r1 = (state = s1, action) => {
+      return { ...state, ...s1 };
+    };
+    const r2 = (state = s2, action) => {
+      return { ...state, ...s2 };
+    };
+    const r3 = (state = s3, action) => {
+      return { ...state, ...s3 };
+    };
 
     const reducer = composeReducers(r1, r2, r3);
 
-    return reducer(undefined, {type: ''});
+    return reducer(undefined, { type: '' });
   };
 
   it('can compose plain-object initial states', () => {
-    const state = compose({a: 1}, {b: 1}, {c: 1});
+    const state = compose({ a: 1 }, { b: 1 }, { c: 1 });
     expect(state).not.to.be.undefined;
-    expect(state).to.deep.equal({a: 1, b: 1, c: 1});
+    expect(state).to.deep.equal({ a: 1, b: 1, c: 1 });
   });
 
   it('can compose array states', () => {
@@ -34,12 +34,12 @@ describe('composeReducers', () => {
   });
 
   it('can compose Immutable::Map initial states', () => {
-    const state = compose(fromJS({a: 1}), fromJS({b: 1}), fromJS({c: 1}));
+    const state = compose(fromJS({ a: 1 }), fromJS({ b: 1 }), fromJS({ c: 1 }));
     expect(Map.isMap(state)).to.be.true;
 
     const plain = state.toJS();
     expect(plain).not.to.be.null;
-    expect(plain).to.deep.equal({a: 1, b: 1, c: 1});
+    expect(plain).to.deep.equal({ a: 1, b: 1, c: 1 });
   });
 
   it('can compose Immutable::Set initial states', () => {

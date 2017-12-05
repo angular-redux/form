@@ -10,7 +10,7 @@ import {
   Directive,
   Optional,
   EmbeddedViewRef,
-  OnInit,
+  OnInit
 } from '@angular/core';
 import {
   NG_VALUE_ACCESSOR,
@@ -22,39 +22,30 @@ import {
   FormGroupDirective,
   NgModelGroup,
   ControlContainer,
-  ControlValueAccessor,
+  ControlValueAccessor
 } from '@angular/forms';
 
-import {
-  AsyncValidatorFn,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import {
-  NG_ASYNC_VALIDATORS,
-  NG_VALIDATORS
-} from '@angular/forms';
-import {Unsubscribe} from 'redux';
+import { AsyncValidatorFn, ValidatorFn, Validators } from '@angular/forms';
+import { NG_ASYNC_VALIDATORS, NG_VALIDATORS } from '@angular/forms';
+import { Unsubscribe } from 'redux';
 
-import {ConnectBase} from '../connect';
-import {FormStore} from '../form-store';
-import {State} from '../state';
-import {controlPath, selectValueAccessor} from '../shims';
+import { ConnectBase } from '../connect';
+import { FormStore } from '../form-store';
+import { State } from '../state';
+import { controlPath, selectValueAccessor } from '../shims';
 
 export class ConnectArrayTemplate {
-  constructor(
-    public $implicit: any,
-    public index: number,
-    public item: any
-  ) {}
+  constructor(public $implicit: any, public index: number, public item: any) {}
 }
 
 @Directive({
   selector: '[connectArray]',
-  providers: [{
-    provide: ControlContainer,
-    useExisting: forwardRef(() => ConnectArray)
-  }]
+  providers: [
+    {
+      provide: ControlContainer,
+      useExisting: forwardRef(() => ConnectArray)
+    }
+  ]
 })
 export class ConnectArray extends ControlContainer implements OnInit {
   private stateSubscription: Unsubscribe;
@@ -66,21 +57,36 @@ export class ConnectArray extends ControlContainer implements OnInit {
   private key: string;
 
   constructor(
-    @Optional() @Host() @SkipSelf() private parent: ControlContainer,
-    @Optional() @Self() @Inject(NG_VALIDATORS) private rawValidators: any[],
-    @Optional() @Self() @Inject(NG_ASYNC_VALIDATORS) private rawAsyncValidators: any[],
-    @Optional() @Self() @Inject(NG_VALUE_ACCESSOR) valueAccessors: any[],
+    @Optional()
+    @Host()
+    @SkipSelf()
+    private parent: ControlContainer,
+    @Optional()
+    @Self()
+    @Inject(NG_VALIDATORS)
+    private rawValidators: any[],
+    @Optional()
+    @Self()
+    @Inject(NG_ASYNC_VALIDATORS)
+    private rawAsyncValidators: any[],
+    @Optional()
+    @Self()
+    @Inject(NG_VALUE_ACCESSOR)
+    valueAccessors: any[],
     private connection: ConnectBase,
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
-    private store: FormStore,
+    private store: FormStore
   ) {
     super();
 
-    this.stateSubscription = this.store.subscribe(state => this.resetState(state));
+    this.stateSubscription = this.store.subscribe(state =>
+      this.resetState(state)
+    );
 
-    this.valueAccessor = selectValueAccessor(<any> this, valueAccessors) || this.simpleAccessor();
-
+    this.valueAccessor =
+      selectValueAccessor(<any>this, valueAccessors) || this.simpleAccessor();
+    console.log(this.valueAccessor);
     this.registerInternals(this.array);
   }
 
@@ -92,7 +98,7 @@ export class ConnectArray extends ControlContainer implements OnInit {
   }
 
   ngOnInit() {
-    this.formDirective.addControl(<any> this);
+    this.formDirective.addControl(<any>this);
   }
 
   get name(): string {
@@ -120,7 +126,7 @@ export class ConnectArray extends ControlContainer implements OnInit {
   }
 
   private get formArray(): FormArrayName {
-    return <any> this;
+    return <any>this;
   }
 
   updateValueAndValidity() {}
@@ -129,6 +135,7 @@ export class ConnectArray extends ControlContainer implements OnInit {
     this.viewContainerRef.clear();
 
     this.formDirective.form.removeControl(this.key);
+    this.stateSubscription();
   }
 
   private resetState(state: any) {
@@ -141,33 +148,37 @@ export class ConnectArray extends ControlContainer implements OnInit {
     let index = 0;
 
     for (const value of iterable) {
-      var viewRef = this.viewContainerRef.length > index
-        ? <EmbeddedViewRef<ConnectArrayTemplate>>this.viewContainerRef.get(index)
-        : null;
+      var viewRef =
+        this.viewContainerRef.length > index
+          ? <EmbeddedViewRef<ConnectArrayTemplate>>this.viewContainerRef.get(
+              index
+            )
+          : null;
 
       if (viewRef == null) {
-        const viewRef = this.viewContainerRef.createEmbeddedView<ConnectArrayTemplate>(
-            this.templateRef,
-            new ConnectArrayTemplate(
-              index,
-              index,
-              value),
-            index);
+        const viewRef = this.viewContainerRef.createEmbeddedView<
+          ConnectArrayTemplate
+        >(
+          this.templateRef,
+          new ConnectArrayTemplate(index, index, value),
+          index
+        );
 
         this.patchDescendantControls(viewRef);
 
-        this.array.insert(index, this.transform(this.array, viewRef.context.item));
-      }
-      else {
-        Object.assign(viewRef.context,
-          new ConnectArrayTemplate(
-            index,
-            index,
-            value));
+        this.array.insert(
+          index,
+          this.transform(this.array, viewRef.context.item)
+        );
+      } else {
+        Object.assign(
+          viewRef.context,
+          new ConnectArrayTemplate(index, index, value)
+        );
       }
 
       ++index;
-    };
+    }
 
     while (this.viewContainerRef.length > index) {
       this.viewContainerRef.remove(this.viewContainerRef.length - 1);
@@ -180,11 +191,11 @@ export class ConnectArray extends ControlContainer implements OnInit {
 
     Object.defineProperties(this, {
       _rawValidators: {
-        value: this.rawValidators || [],
+        value: this.rawValidators || []
       },
       _rawAsyncValidators: {
-        value: this.rawAsyncValidators || [],
-      },
+        value: this.rawAsyncValidators || []
+      }
     });
   }
 
@@ -196,16 +207,19 @@ export class ConnectArray extends ControlContainer implements OnInit {
     groups.forEach(c => {
       Object.defineProperties(c, {
         _parent: {
-          value: this,
+          value: this
         },
         _checkParentType: {
-          value: () => {},
-        },
+          value: () => {}
+        }
       });
     });
   }
 
-  private transform(parent: FormGroup | FormArray, reference: any): AbstractControl {
+  private transform(
+    parent: FormGroup | FormArray,
+    reference: any
+  ): AbstractControl {
     const emptyControl = () => {
       const control = new FormControl(null);
       control.setParent(parent);
@@ -237,14 +251,14 @@ export class ConnectArray extends ControlContainer implements OnInit {
       }
 
       for (const value of iterable) {
-        const transformed = this.transform(array, value)
+        const transformed = this.transform(array, value);
         if (transformed) {
           array.push(transformed);
         }
       }
 
       return array;
-    }
+    };
 
     const associate = (value: any): FormGroup => {
       const group = new FormGroup({});
@@ -261,20 +275,17 @@ export class ConnectArray extends ControlContainer implements OnInit {
     };
 
     if (Array.isArray(reference)) {
-      return iterate(<Array<any>> reference);
-    }
-    else if (reference instanceof Set) {
-      return iterate(<Set<any>> reference);
-    }
-    else if (reference instanceof Map) {
-      return associate(<Map<string, any>> reference);
-    }
-    else if (reference instanceof Object) {
+      return iterate(<Array<any>>reference);
+    } else if (reference instanceof Set) {
+      return iterate(<Set<any>>reference);
+    } else if (reference instanceof Map) {
+      return associate(<Map<string, any>>reference);
+    } else if (reference instanceof Object) {
       return associate(reference);
-    }
-    else {
+    } else {
       throw new Error(
-        `Cannot convert object of type ${typeof reference} / ${reference.toString()} to form element`);
+        `Cannot convert object of type ${typeof reference} / ${reference.toString()} to form element`
+      );
     }
   }
 
