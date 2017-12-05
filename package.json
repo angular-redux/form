@@ -1,6 +1,6 @@
 {
   "name": "@angular-redux/form",
-  "version": "6.7.0-0",
+  "version": "6.7.0-1",
   "description": "Build Angular 2+ forms with Redux",
   "dependencies": {
     "immutable": "^3.8.1"
@@ -61,12 +61,10 @@
     "prebuild": "npm run clean",
     "build": "ngc",
     "clean": "rimraf dist",
-    "cover":
-      "istanbul report --include=**/chrome/coverage-final.json text text-summary",
+    "cover": "istanbul report --include=**/chrome/coverage-final.json text text-summary",
     "pretest": "rimraf coverage",
     "posttest": "npm run cover",
-    "test:watch":
-      "cross-env NODE_ENV=development karma start --singleRun false",
+    "test:watch": "cross-env NODE_ENV=development karma start --singleRun false",
     "prepublish": "npm run build"
   },
   "main": "dist/source/index.js",
