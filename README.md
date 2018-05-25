@@ -13,16 +13,6 @@ and
 
 This supports both [Template driven forms](https://angular.io/guide/forms) and [Reactive driven forms](https://angular.io/guide/reactive-forms).
 
-# CALL FOR MAINTAINERS
-
-This package was inherited from someone no longer with the organization. I myself don't actually use it, and support for reactive forms has languished due to my personal lack of a use case for them.
-
-In addition, the toolchain is a mess and kind of needs to cleaned out and replaced.
-
-It is currently on life-support compared to the main `store` package.
-
-Do you use angular-redux/form? Would you like to be a maintainer? Shoot us an issue and tag @e-schultz, @smithad15, and @sethdavenport.
-
 #### Template Driven
 
 For the simplest use-cases, the API is very straightforward. Your template
